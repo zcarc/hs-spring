@@ -2,8 +2,8 @@ package com.hslog.api.controller;
 
 import com.hslog.api.message.ValidationMessage;
 import com.hslog.api.response.ErrorResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@Slf4j
 @ControllerAdvice
 public class ExceptionController {
 
@@ -22,9 +21,13 @@ public class ExceptionController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
 
-        ErrorResponse errorResponse = new ErrorResponse(ValidationMessage.ERROR_CODE, ValidationMessage.ERROR_MESSAGE);
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(ValidationMessage.ERROR_CODE)
+                .message(ValidationMessage.ERROR_MESSAGE)
+                .build();
 
-        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+        BindingResult bindingResult = e.getBindingResult();
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
         for (FieldError fieldError : fieldErrors) {
             errorResponse.addValidation(fieldError.getField(), fieldError.getDefaultMessage());

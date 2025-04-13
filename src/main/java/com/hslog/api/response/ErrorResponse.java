@@ -1,7 +1,7 @@
 package com.hslog.api.response;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +15,24 @@ import java.util.List;
  */
 
 @Getter
-@RequiredArgsConstructor
 public class ErrorResponse {
 
     private final int code;
     private final String message;
-
     private final List<ErrorValidation> errorValidations = new ArrayList<>();
 
     public void addValidation(final String fieldName, final String errorMessage) {
-        errorValidations.add(new ErrorValidation(fieldName, errorMessage));
+        errorValidations.add(ErrorValidation.builder()
+                .fieldName(fieldName)
+                .errorMessage(errorMessage)
+                .build()
+        );
     }
+
+    @Builder
+    public ErrorResponse(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
 }
