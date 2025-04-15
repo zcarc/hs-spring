@@ -2,6 +2,8 @@ package com.hslog.api.controller;
 
 import com.hslog.api.message.ValidationMessage;
 import com.hslog.api.response.ErrorResponse;
+import com.hslog.api.response.ErrorValidation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @ControllerAdvice
 public class ExceptionController {
 
@@ -21,18 +25,23 @@ public class ExceptionController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(ValidationMessage.ERROR_CODE)
-                .message(ValidationMessage.ERROR_MESSAGE)
-                .build();
-
         BindingResult bindingResult = e.getBindingResult();
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
+        List<ErrorValidation> errorValidations = new ArrayList<>();
+
         for (FieldError fieldError : fieldErrors) {
-            errorResponse.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
+            ErrorValidation errorValidation = ErrorValidation.builder()
+                    .fieldName(fieldError.getField())
+                    .errorMessage(fieldError.getDefaultMessage())
+                    .build();
+            errorValidations.add(errorValidation);
         }
 
-        return errorResponse;
+        return ErrorResponse.builder()
+                .code(ValidationMessage.MSG_VAL_ERROR_CODE)
+                .message(ValidationMessage.MSG_VAL_ERROR_MESSAGE)
+                .errorValidations(errorValidations)
+                .build();
     }
 }

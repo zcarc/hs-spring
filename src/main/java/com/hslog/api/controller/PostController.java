@@ -1,14 +1,14 @@
 package com.hslog.api.controller;
 
 import com.hslog.api.request.PostCreate;
+import com.hslog.api.response.PostResponse;
 import com.hslog.api.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,4 +23,16 @@ public class PostController {
         log.info("param postCreate={}", postCreate);
         postService.write(postCreate);
     }
+
+    @GetMapping("/posts/{postId}")
+    public PostResponse getPost(@PathVariable Long postId) {
+        log.info("param postId={}", postId);
+        return postService.getPost(postId);
+    }
+
+    @GetMapping("/posts")
+    public List<PostResponse> getPosts() {
+        return postService.getPosts();
+    }
+
 }

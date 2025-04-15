@@ -1,5 +1,6 @@
 package com.hslog.api.request;
 
+import com.hslog.api.message.ValidationMessage;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,10 +10,10 @@ import lombok.ToString;
 @Getter
 public class PostCreate {
 
-    @NotBlank(message = "타이틀을 입력해주세요.")
+    @NotBlank(message = ValidationMessage.MSG_VAL_TITLE_REQUIRED)
     private final String title;
 
-    @NotBlank(message = "컨텐츠를 입력해주세요.")
+    @NotBlank(message = ValidationMessage.MSG_VAL_CONTENT_REQUIRED)
     private final String content;
 
     @Builder
